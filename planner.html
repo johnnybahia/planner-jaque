@@ -198,10 +198,10 @@
         .btn-add-appt { background: #10b981; color: white; display: flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .btn-add-appt:hover { background: #059669; }
 
-        .calendar-grid { padding: 5px; flex: 1; overflow: hidden; display: flex; flex-direction: column; }
-        .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; align-items: stretch; height: 100%; }
+        .calendar-grid { padding: 5px; flex: 1; overflow-y: auto; min-height: 0; display: flex; flex-direction: column; }
+        .days { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(120px, 1fr); gap: 4px; align-items: stretch; flex: 1; }
 
-        .day-card { background: white; border: 2px solid #f3e8ff; border-radius: 8px; padding: 4px; display: flex; flex-direction: column; transition: border-color 0.2s; position: relative; height: 100%; overflow: hidden; }
+        .day-card { background: white; border: 2px solid #f3e8ff; border-radius: 8px; padding: 4px; display: flex; flex-direction: column; transition: border-color 0.2s; position: relative; overflow: hidden; }
         .day-card.current-month { border-color: #f3e8ff; }
         .day-card.today { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); }
         .day-card.empty-day { background: transparent; border: none; box-shadow: none; pointer-events: none; }
@@ -1265,19 +1265,32 @@
     }
 
     function saveSelfContainingFile() {
-        const htmlContent = document.documentElement.outerHTML;
-        const scriptContent = document.getElementById('app-script').innerHTML;
         const currentDataString = JSON.stringify(savedData);
-        
+        const scriptContent = document.getElementById('app-script').innerHTML;
+
+        // Regex genérica que encontra qualquer declaração savedData (JSON ou objeto literal)
         const newScriptContent = scriptContent.replace(
-            /let savedData = {"notes":{"2026-0-26-0":"Retorno do recesso ","2026-0-16-1":"Resultado Enem ","2026-0-23-1":"Aula experimental de beach tênis ","2026-0-26-7":"Monsenhor ","2026-0-30-1":"Jornada do Lavoisier ","2026-2-21-1":"Encontro pedagógico (pais)","2026-1-28-1":"Encontro pedagógico ","2026-3-25-1":"Encontro pedagógico ","2026-4-23-1":"Encontro pedagógico (boletim)","2026-6-25-1":"Encontro pedagógico ","2026-7-22-1":"Encontro pedagógico ","2026-8-12-1":"Encontro pedagógico ","2026-9-24-1":"Encontro pedagógico ","2026-10-14-1":"Encontro pedagógico ","2026-0-31-1":"comemoração Ana Julia","2026-1-2-0":"início das aulas"},"lineColors":{"2026-0-26-0":"color-1","2026-0-30-1":"color-2","2026-1-2-0":"color-1"},"legendLabels":{"color-1":"Csaj ","color-2":"Lavoisier ","color-3":"","color-4":"Provas"},"holidays":{"2026-3-02":"Semana santa ","2026-4-01":"Dia do trabalho ","2026-4-29":"Aniversário Saj","2026-5-04":"Corpus christi","2026-5-13":"Padr9eira deSaj","2026-6-19":"Recesso São João ","2026-8-07":"Independência ","2026-9-12":"Dia das crianças ","2026-9-15":"Dia do professor ","2026-10-02":"Finados","2026-10-15":"República ","2026-10-20":"Dia da consciência ","2026-6-02":"Independência da Bahia ","2026-7-11":"Dia do estudante ","2026-1-16":"carnaval","2026-3-21":"tiradentes","2026-5-19":"recesso junino","2026-6-29":"niver Cruz","2026-8-15":"padroeira Cruz"},"alerts":[{"id":"1769520830922","date":"2026-02-21","daysBefore":3,"desc":"Encontro pedagógico"},{"id":"1769520860679","date":"2026-05-23","daysBefore":3,"desc":"Encontro pedagógico "}]};/, 
-            `let savedData = ${currentDataString};`
+            /let savedData\s*=\s*\/\*SAVE_DATA_HERE\*\/\s*\{[\s\S]*?\};\s*/,
+            `let savedData = /*SAVE_DATA_HERE*/ ${currentDataString};\n    `
+        ).replace(
+            /let savedData\s*=\s*\/\*SAVE_DATA_HERE\*\/\s*(\{[\s\S]*?"alerts"\s*:\s*\[[\s\S]*?\]\s*\})\s*;/,
+            `let savedData = /*SAVE_DATA_HERE*/ ${currentDataString};`
         );
+
+        // Se a primeira regex não conseguiu substituir (dados já salvos anteriormente sem o comentário),
+        // tenta uma regex mais genérica que encontra o padrão let savedData = {...};
+        let finalScriptContent = newScriptContent;
+        if (newScriptContent === scriptContent) {
+            finalScriptContent = scriptContent.replace(
+                /let savedData\s*=\s*\{[^;]*"alerts"\s*:\s*\[[^\]]*\]\s*\}\s*;/,
+                `let savedData = /*SAVE_DATA_HERE*/ ${currentDataString};`
+            );
+        }
 
         const headContent = document.head.innerHTML;
         const bodyClone = document.body.cloneNode(true);
         bodyClone.querySelector('#calendarDays').innerHTML = '';
-        bodyClone.querySelector('#app-script').innerHTML = newScriptContent;
+        bodyClone.querySelector('#app-script').innerHTML = finalScriptContent;
         bodyClone.querySelector('#headerLegendContainer').innerHTML = '<!-- Preenchido via JS -->';
         bodyClone.querySelector('#holiday-list').innerHTML = '<!-- Preenchido via JS -->';
         bodyClone.querySelector('#alert-list').innerHTML = '<!-- Preenchido via JS -->';
@@ -1285,7 +1298,7 @@
         bodyClone.querySelector('#active-alerts-bar').classList.remove('active');
         bodyClone.querySelector('#notification-popup-list').innerHTML = '';
         bodyClone.querySelector('#notification-popup-overlay').style.display = 'none';
-        
+
         const yearSelectClone = bodyClone.querySelector('#yearSelect');
         if(yearSelectClone) yearSelectClone.innerHTML = '';
         const copyYearClone = bodyClone.querySelector('#copy-source-year');
@@ -1302,7 +1315,7 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        
+
         alert("Arquivo salvo! Substitua o arquivo antigo.");
     }
 </script>
