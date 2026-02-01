@@ -1,0 +1,1310 @@
+<!DOCTYPE html><html lang="pt-BR"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Planner Prof. Jaqueline</title>
+    
+    <!-- Configurações de Web App (PWA) -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#ec4899">
+    <meta name="application-name" content="Planner Prof.">
+    
+    <!-- Ícone Embutido -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB4PSIzMiIgeT0iODAiIHdpZHRoPSI0NDgiIGhlaWdodD0iMzg0IiByeD0iMzIiIGZpbGw9IiNmY2U3ZjMiIHN0cm9rZT0iI2VjNDg5OSIgc3Ryb2tlLXdpZHRoPSIzMiIvPjxwYXRoIGQ9Ik0xMjggNDh2NjRNMzg0IDQ4djY0IiBzdHJva2U9IiNlYzQ4OTkiIHN0cm9rZS13aWR0aD0iMzIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxsaW5lIHgxPSIzMiIgeTE9IjE5MiIgeDI9IjQ4MCIgeTI9IjE5MiIgc3Ryb2tlPSIjZWM0ODk5IiBzdHJva2Utd2lkdGg9IjMyIi8+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMzA0IiByPSIzMiIgZmlsbD0iI2VjNDg5OSIvPjwvc3ZnPg==">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB4PSIzMiIgeT0iODAiIHdpZHRoPSI0NDgiIGhlaWdodD0iMzg0IiByeD0iMzIiIGZpbGw9IiNmY2U3ZjMiIHN0cm9rZT0iI2VjNDg5OSIgc3Ryb2tlLXdpZHRoPSIzMiIvPjxwYXRoIGQ9Ik0xMjggNDh2NjRNMzg0IDQ4djY0IiBzdHJva2U9IiNlYzQ4OTkiIHN0cm9rZS13aWR0aD0iMzIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxsaW5lIHgxPSIzMiIgeTE9IjE5MiIgeDI9IjQ4MCIgeTI9IjE5MiIgc3Ryb2tlPSIjZWM0ODk5IiBzdHJva2Utd2lkdGg9IjMyIi8+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMzA0IiByPSIzMiIgZmlsbD0iI2VjNDg5OSIvPjwvc3ZnPg==">
+
+    <style>
+        :root {
+            --primary: #ec4899; 
+            --primary-light: #fce7f3; 
+            --secondary: #a855f7; 
+            --secondary-light: #f3e8ff; 
+            --bg: #fdf2f8; 
+            --text: #374151;
+            --white: #ffffff;
+
+            /* Cores Personalizáveis */
+            --c1-bg: #dcfce7; --c1-border: #22c55e; --c1-text: #14532d; /* Verde */
+            --c2-bg: #dbeafe; --c2-border: #3b82f6; --c2-text: #1e3a8a; /* Azul */
+            --c3-bg: #ffedd5; --c3-border: #f97316; --c3-text: #7c2d12; /* Laranja */
+            --c4-bg: #fee2e2; --c4-border: #ef4444; --c4-text: #7f1d1d; /* Vermelho */
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden; 
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 5px; 
+            -webkit-touch-callout: none;
+            touch-action: pan-x pan-y;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%; 
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid #fbcfe8;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #rotate-overlay { display: none; }
+        @media screen and (orientation: portrait) {
+            .container { display: none; }
+            #rotate-overlay {
+                display: flex; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: linear-gradient(135deg, #ec4899, #a855f7); color: white;
+                z-index: 9999; flex-direction: column; align-items: center;
+                justify-content: center; text-align: center; padding: 20px;
+            }
+            .rotate-icon { font-size: 80px; margin-bottom: 20px; animation: spin-slow 2s infinite ease-in-out; }
+            @keyframes spin-slow {
+                0% { transform: rotate(0deg); }
+                25% { transform: rotate(-90deg); }
+                100% { transform: rotate(-90deg); }
+            }
+        }
+
+        header {
+            background: linear-gradient(to right, #f472b6, #fb7185, #c084fc);
+            color: white;
+            padding: 5px 10px; 
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex-shrink: 0; 
+        }
+
+        .header-top {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h1 { margin: 0; font-size: 1.2rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        .subtitle { color: #fce7f3; font-size: 0.8rem; margin: 0; }
+
+        .header-legend {
+            display: flex; gap: 10px; font-size: 0.75rem; background: rgba(255,255,255,0.2);
+            padding: 2px 8px; border-radius: 12px; flex-wrap: wrap;
+        }
+        .legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+
+        .alerts-bar {
+            display: none; 
+            background-color: #fffbeb; 
+            border: 2px solid #fbbf24;
+            color: #92400e;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .alerts-bar:hover { background-color: #fef3c7; }
+        .alerts-bar.active { display: block; }
+        .alert-item-display { margin-bottom: 0; display: flex; align-items: center; gap: 5px; }
+        .alert-icon { font-size: 0.9rem; }
+
+        /* MODAIS */
+        .modal-overlay, #notification-popup-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 20000; justify-content: center; align-items: center;
+            backdrop-filter: blur(3px);
+        }
+        .custom-modal, .notification-popup {
+            background: white; padding: 20px; border-radius: 16px; width: 90%; max-width: 450px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); border-top: 6px solid var(--secondary);
+            max-height: 90vh; overflow-y: auto;
+            animation: slide-down 0.4s ease-out;
+        }
+        @keyframes slide-down {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .notification-popup { border-top-color: #f59e0b; }
+        .notification-title { font-size: 1.5rem; font-weight: bold; color: #92400e; margin-bottom: 15px; }
+        .notification-list { max-height: 300px; overflow-y: auto; margin-bottom: 20px; }
+        .notification-item { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 10px; margin-bottom: 8px; }
+        .notification-date { font-weight: bold; color: #b45309; display: block; }
+        .btn-acknowledge { width: 100%; padding: 12px; background: #f59e0b; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+        .modal-title { font-size: 1.1rem; font-weight: bold; color: var(--text); margin-bottom: 15px; text-align: center; }
+        .color-list { display: flex; flex-direction: column; gap: 10px; }
+        .color-option { display: flex; align-items: center; gap: 10px; padding: 5px; border-radius: 8px; border: 1px solid #eee; }
+        .color-preview { width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.1); cursor: pointer; flex-shrink: 0;}
+        .legend-input { flex: 1; border: 1px solid #ccc; padding: 5px; border-radius: 4px; font-size: 0.9rem; }
+        
+        .holiday-form, .alert-form, .copy-form, .appointment-form { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .holiday-form input, .holiday-form select, .alert-form input, .alert-form select, .copy-form select, .appointment-form input, .appointment-form select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .holiday-form button, .alert-form button, .copy-form button, .appointment-form button { background: var(--secondary); color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        
+        .holiday-list-container, .alert-list-container { max-height: 200px; overflow-y: auto; }
+        .holiday-item, .alert-item { display: flex; justify-content: space-between; align-items: center; background: #f9fafb; padding: 8px; border-radius: 4px; margin-bottom: 5px; font-size: 0.9rem; }
+        .holiday-item button, .alert-item button { background: #fee2e2; color: #b91c1c; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .modal-actions { margin-top: 20px; display: flex; justify-content: space-between; gap: 10px; }
+        .btn-modal { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; flex: 1; }
+        .btn-close { background: #e5e7eb; color: #374151; }
+        .btn-clear { background: #fee2e2; color: #b91c1c; }
+
+        /* Estilo para seleção de cor no modal de compromisso */
+        .appt-color-selection {
+            display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; width: 100%;
+        }
+        .appt-color-radio { display: none; } /* Esconde o radio button original */
+        .appt-color-label {
+            display: flex; align-items: center; gap: 5px;
+            padding: 4px 8px; border: 1px solid #ddd; border-radius: 20px;
+            cursor: pointer; font-size: 0.8rem; transition: all 0.2s;
+        }
+        .appt-color-radio:checked + .appt-color-label {
+            border-color: var(--secondary); background: #f3e8ff; font-weight: bold; transform: scale(1.05);
+        }
+        .appt-color-preview { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+
+        /* Controles e Botões */
+        .controls { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+        .month-selector { display: flex; align-items: center; background: rgba(255,255,255,0.2); padding: 2px 4px; border-radius: 8px; }
+        .year-select { background: transparent; border: none; color: white; font-size: 0.9rem; font-weight: bold; cursor: pointer; padding: 0 5px; outline: none; border-bottom: 2px solid rgba(255,255,255,0.3); }
+        .year-select option { background: #a855f7; color: white; }
+
+        button { background: rgba(255,255,255,0.3); border: none; color: white; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.8rem; transition: background 0.2s; }
+        button:hover { background: rgba(255,255,255,0.5); }
+        
+        .btn-today { font-size: 0.75rem; padding: 3px 6px; margin: 0 5px; background: rgba(255,255,255,0.5); color: #7e22ce; }
+        .btn-action { background: #facc15; color: #713f12; display: flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); font-size: 0.75rem; }
+        .btn-save-self { background: #fff; color: #ec4899; border: 2px solid white; }
+        .btn-holiday { background: #ef4444; color: white; display: flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .btn-legend-edit { background: #a855f7; color: white; display: flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .btn-alert-manager { background: #f97316; color: white; display: flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .btn-copy-month { background: #3b82f6; color: white; display: flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .btn-view-toggle { background: #8b5cf6; color: white; display: flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.3); }
+        .btn-add-appt { background: #10b981; color: white; display: flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .btn-add-appt:hover { background: #059669; }
+
+        .calendar-grid { padding: 5px; flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; align-items: stretch; height: 100%; }
+
+        .day-card { background: white; border: 2px solid #f3e8ff; border-radius: 8px; padding: 4px; display: flex; flex-direction: column; transition: border-color 0.2s; position: relative; height: 100%; overflow: hidden; }
+        .day-card.current-month { border-color: #f3e8ff; }
+        .day-card.today { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); }
+        .day-card.empty-day { background: transparent; border: none; box-shadow: none; pointer-events: none; }
+        .day-card.empty-day * { display: none; }
+        .day-card.is-holiday { border-color: #fca5a5; background: #fef2f2; }
+        .day-card.is-holiday .day-header { background: #fee2e2; margin: -4px -4px 4px -4px; padding: 4px; border-radius: 6px 6px 0 0; border-bottom: 1px solid #fecaca; }
+
+        .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; flex-shrink: 0; }
+        .day-number-container { display: flex; align-items: center; gap: 4px; font-weight: bold; color: #4b5563; padding: 0; }
+        .day-circle { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #f3f4f6; color: #4b5563; font-size: 0.75rem; }
+        .day-text { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .today .day-circle { background: var(--primary); color: white; }
+        .today .day-text { color: var(--primary); }
+        .weekend-day .day-circle { color: #e11d48; background: #ffe4e6; }
+        .weekend-day .day-text { color: #e11d48; }
+        
+        .holiday-label { font-size: 0.65rem; color: #b91c1c; font-weight: bold; text-transform: uppercase; text-align: right; line-height: 1; max-width: 40%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .btn-clear-day { background: none; border: none; cursor: pointer; opacity: 0.3; padding: 2px; border-radius: 4px; color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+        .btn-clear-day:hover { opacity: 1; background: #fee2e2; }
+
+        .day-inputs { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 0; overflow: hidden; }
+        .input-group { display: flex; align-items: center; border-bottom: 1px dotted #e5e7eb; padding: 0; flex: 1; min-height: 0; transition: all 0.3s; border-radius: 2px; }
+        .line-input { width: 100%; border: none; font-family: 'Segoe UI', sans-serif; font-size: 0.75rem; background: transparent; outline: none; padding: 0 2px; color: #4b5563; resize: none; overflow: hidden; white-space: pre-wrap; height: 100%; display: flex; align-items: center; }
+        .turn-separator { font-size: 0.65rem; color: #a855f7; text-align: center; margin: 1px 0; font-weight: bold; background: #f3e8ff; border-radius: 2px; flex-shrink: 0; }
+
+        /* Estilo para resumo do dia */
+        .day-summary-section { margin-top: 10px; padding: 10px; background: #f9fafb; border-radius: 6px; font-size: 0.9rem; }
+        .day-summary-title { font-weight: bold; color: var(--secondary); margin-bottom: 5px; border-bottom: 1px solid #e5e7eb; }
+        .day-summary-list { list-style: none; padding: 0; margin: 0; }
+        .day-summary-list li { padding: 2px 0; border-bottom: 1px dashed #eee; color: #4b5563; }
+
+        /* Cores */
+        .color-1 { background-color: var(--c1-bg); border-bottom: 1px solid var(--c1-border); }
+        .color-1 .line-input { color: var(--c1-text); font-weight: 600; }
+        .color-2 { background-color: var(--c2-bg); border-bottom: 1px solid var(--c2-border); }
+        .color-2 .line-input { color: var(--c2-text); font-weight: 600; }
+        .color-3 { background-color: var(--c3-bg); border-bottom: 1px solid var(--c3-border); }
+        .color-3 .line-input { color: var(--c3-text); font-weight: 600; }
+        .color-4 { background-color: var(--c4-bg); border-bottom: 1px solid var(--c4-border); }
+        .color-4 .line-input { color: var(--c4-text); font-weight: 600; }
+
+        .help-text { width: 100%; text-align: center; color: rgba(255,255,255,0.8); font-size: 0.7rem; margin-top: 2px; font-style: italic; }
+
+        @media print {
+            @page { size: landscape; margin: 5mm; }
+            html, body { height: auto; overflow: visible; display: block; }
+            .container { width: 100%; max-width: none; border: none; shadow: none; height: auto; overflow: visible; display: block; }
+            .no-print, .modal-overlay, #notification-popup-overlay, #rotate-overlay, .alerts-bar, .btn-clear-day, .help-text { display: none !important; }
+            header { padding: 5px 0; border-bottom: 2px solid var(--primary); display: block; margin-bottom: 5px; }
+            h1 { color: black; font-size: 16pt; margin: 0; }
+            .subtitle { color: #444; font-size: 10pt; margin: 0; }
+            .calendar-grid { padding: 0; overflow: visible; display: block; }
+            .days { display: grid; gap: 4px; height: auto; }
+            .day-card { border: 1px solid #ccc; min-height: 200px; padding: 2px; break-inside: avoid; height: auto !important; display: block; }
+            .day-card.empty-day { border: none !important; background: transparent !important; }
+            .day-card.is-holiday { background-color: #fef2f2 !important; border-color: #ccc !important; }
+            .day-card.is-holiday .day-header { background-color: #fee2e2 !important; }
+            .day-circle { width: 18px; height: 18px; font-size: 9pt; background: #eee !important; color: black !important; display: inline-flex; }
+            .day-text { font-size: 9pt; color: black !important; }
+            .holiday-label { color: black !important; font-weight: bold; }
+            .day-inputs { display: block; }
+            .input-group { border-bottom: 1px solid #ccc; min-height: 16px; display: block; }
+            .line-input { font-size: 9pt; height: auto !important; padding: 0 2px; display: block; }
+            .turn-separator { font-size: 8pt; background: #eee; color: black; margin: 2px 0; }
+            .color-1 { background-color: #dcfce7 !important; }
+            .color-2 { background-color: #dbeafe !important; }
+            .color-3 { background-color: #ffedd5 !important; }
+            .color-4 { background-color: #fee2e2 !important; }
+        }
+    </style>
+</head><body>
+
+<div id="rotate-overlay">
+    <div class="rotate-icon">⟳</div>
+    <h2>Gire seu dispositivo</h2>
+    <p>Para usar o Planner da Professora Jaqueline, por favor use a tela na horizontal.</p>
+</div>
+
+<!-- POPUP AUTOMÁTICO DE NOTIFICAÇÃO -->
+<div id="notification-popup-overlay" style="display: none;">
+    <div class="notification-popup">
+        <div class="notification-title">
+            <span style="font-size: 2rem;">🔔</span> Lembretes Importantes
+        </div>
+        <div class="notification-list" id="notification-popup-list"></div>
+        <button class="btn-acknowledge" onclick="closeNotificationPopup()">Estou Ciente</button>
+    </div>
+</div>
+
+<!-- MODAL DE CORES -->
+<div id="color-modal-overlay" class="modal-overlay">
+    <div class="custom-modal">
+        <div class="modal-title" id="color-modal-title">Selecione uma Categoria</div>
+        <p style="font-size: 0.8rem; text-align: center; color: #666; margin-top: -10px; margin-bottom: 15px;">
+            Edite o nome para mudar a legenda.<br>Clique na bolinha para aplicar a cor.
+        </p>
+        <div class="color-list">
+            <div class="color-option">
+                <div class="color-preview" style="background: var(--c1-border);" onclick="applyColor('color-1')"></div>
+                <input type="text" id="legend-label-1" class="legend-input" onchange="updateLegend('color-1', this.value)">
+            </div>
+            <div class="color-option">
+                <div class="color-preview" style="background: var(--c2-border);" onclick="applyColor('color-2')"></div>
+                <input type="text" id="legend-label-2" class="legend-input" onchange="updateLegend('color-2', this.value)">
+            </div>
+            <div class="color-option">
+                <div class="color-preview" style="background: var(--c3-border);" onclick="applyColor('color-3')"></div>
+                <input type="text" id="legend-label-3" class="legend-input" onchange="updateLegend('color-3', this.value)">
+            </div>
+            <div class="color-option">
+                <div class="color-preview" style="background: var(--c4-border);" onclick="applyColor('color-4')"></div>
+                <input type="text" id="legend-label-4" class="legend-input" onchange="updateLegend('color-4', this.value)">
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-modal btn-clear" id="btn-remove-color" onclick="applyColor(null)">Sem Cor</button>
+            <button class="btn-modal btn-close" onclick="closeModal('color-modal-overlay')">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE FERIADOS -->
+<div id="holiday-modal-overlay" class="modal-overlay">
+    <div class="custom-modal" style="max-width: 450px;">
+        <div class="modal-title">Gerenciar Feriados e Folgas</div>
+        <div class="holiday-form">
+            <div style="flex: 1 1 100%; font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: var(--secondary);">
+                Adicionar novo para o ano <span id="holiday-year-display"></span>:
+            </div>
+            <input type="number" id="h-day" placeholder="Dia" min="1" max="31" style="width: 60px;">
+            <select id="h-month" style="flex: 1;">
+                <option value="0">Janeiro</option>
+                <option value="1">Fevereiro</option>
+                <option value="2">Março</option>
+                <option value="3">Abril</option>
+                <option value="4">Maio</option>
+                <option value="5">Junho</option>
+                <option value="6">Julho</option>
+                <option value="7">Agosto</option>
+                <option value="8">Setembro</option>
+                <option value="9">Outubro</option>
+                <option value="10">Novembro</option>
+                <option value="11">Dezembro</option>
+            </select>
+            <input type="text" id="h-name" placeholder="Ex: Feriado, Folga" style="flex: 2;">
+            <button onclick="addHoliday()">+</button>
+        </div>
+        <div style="font-size: 0.85rem; color: #666; margin-bottom: 5px;">Feriados cadastrados neste ano:</div>
+        <div class="holiday-list-container" id="holiday-list"><!-- Preenchido via JS --></div>
+        <div class="modal-actions">
+            <button class="btn-modal btn-close" onclick="closeModal('holiday-modal-overlay')">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE AVISOS -->
+<div id="alert-modal-overlay" class="modal-overlay">
+    <div class="custom-modal" style="max-width: 450px;">
+        <div class="modal-title">Gerenciar Avisos</div>
+        <div class="alert-form">
+            <div style="flex: 1 1 100%; font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; color: var(--secondary);">
+                Adicionar novo evento:
+            </div>
+            <input type="date" id="alert-date" style="flex: 1;">
+            <input type="number" id="alert-days" placeholder="Dias antes" min="1" max="30" style="width: 80px;" title="Avisar com quantos dias de antecedência?">
+            <input type="text" id="alert-desc" placeholder="Descrição do evento" style="flex: 1 1 100%; margin-top: 5px;">
+            <button onclick="addAlert()" style="margin-top: 5px; width: 100%;">Adicionar Aviso</button>
+        </div>
+        <div style="font-size: 0.85rem; color: #666; margin-bottom: 5px;">Eventos programados:</div>
+        <div class="alert-list-container" id="alert-list"><!-- Preenchido via JS --></div>
+        <div class="modal-actions">
+            <button class="btn-modal btn-close" onclick="closeModal('alert-modal-overlay')">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE INSERIR COMPROMISSO -->
+<div id="appointment-modal-overlay" class="modal-overlay">
+    <div class="custom-modal" style="max-width: 400px;">
+        <div class="modal-title" id="appt-modal-title">➕ Inserir Compromisso</div>
+        
+        <div id="appt-form-section">
+            <div class="appointment-form">
+                <input type="date" id="appt-date" style="flex: 1 1 100%; margin-bottom: 8px;">
+                
+                <input type="text" id="appt-text" placeholder="Digite o compromisso..." style="flex: 1 1 100%; margin-bottom: 8px;">
+                
+                <div style="display: flex; gap: 10px; width: 100%; margin-bottom: 10px;">
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                        <input type="radio" name="appt-turn" value="morning" checked=""> Manhã
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                        <input type="radio" name="appt-turn" value="afternoon"> Tarde
+                    </label>
+                </div>
+
+                <!-- SELEÇÃO DE COR -->
+                <div style="font-size: 0.85rem; color: #666; margin-bottom: 5px;">Escolher Legenda (Opcional):</div>
+                <div class="appt-color-selection" id="appt-color-options">
+                    <!-- Preenchido via JS -->
+                </div>
+
+                <button onclick="saveAppointment()" style="width: 100%; background: #10b981; margin-top: 10px;">Adicionar</button>
+            </div>
+        </div>
+
+        <!-- Área de Resumo do Dia -->
+        <div id="appt-summary-section" style="display: none;">
+            <div class="day-summary-section">
+                <div class="day-summary-title">Resumo do Dia (Manhã)</div>
+                <ul class="day-summary-list" id="summary-morning-list"></ul>
+            </div>
+            <div class="day-summary-section">
+                <div class="day-summary-title">Resumo do Dia (Tarde)</div>
+                <ul class="day-summary-list" id="summary-afternoon-list"></ul>
+            </div>
+            <button onclick="resetApptForm()" style="margin-top: 10px; width: 100%; background: #3b82f6; color: white; padding: 8px; border: none; border-radius: 4px; cursor: pointer;">Adicionar Outro</button>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-modal btn-close" onclick="closeModal('appointment-modal-overlay')">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE CÓPIA DE MÊS -->
+<div id="copy-modal-overlay" class="modal-overlay">
+    <div class="custom-modal" style="max-width: 400px;">
+        <div class="modal-title">📋 Copiar Padrão Semanal</div>
+        <p style="font-size: 0.9rem; color: #555; line-height: 1.4;">
+            Isso vai copiar a rotina (aulas) de um mês anterior para preencher automaticamente o mês atual (<span id="copy-target-month-name"></span>).
+        </p>
+        <div class="copy-form">
+            <div style="width: 100%; font-weight: bold; margin-bottom: 5px; color: var(--secondary);">Copiar de:</div>
+            <select id="copy-source-month" style="flex: 1;">
+                <option value="0">Janeiro</option>
+                <option value="1">Fevereiro</option>
+                <option value="2">Março</option>
+                <option value="3">Abril</option>
+                <option value="4">Maio</option>
+                <option value="5">Junho</option>
+                <option value="6">Julho</option>
+                <option value="7">Agosto</option>
+                <option value="8">Setembro</option>
+                <option value="9">Outubro</option>
+                <option value="10">Novembro</option>
+                <option value="11">Dezembro</option>
+            </select>
+            <select id="copy-source-year" style="width: 80px;"></select>
+        </div>
+        <div style="background: #fff3cd; padding: 10px; border-radius: 6px; font-size: 0.85rem; color: #856404; margin-bottom: 15px;">
+            ⚠️ <b>Atenção:</b> Isso vai substituir o que estiver escrito no mês atual.
+        </div>
+        <div class="modal-actions">
+            <button class="btn-modal btn-save-self" onclick="executeCopyMonth()" style="background: #3b82f6; color: white;">Confirmar Cópia</button>
+            <button class="btn-modal btn-close" onclick="closeModal('copy-modal-overlay')">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <header>
+        <div class="header-top">
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <div style="display: flex; align-items: center;">
+                    <div>
+                        <h1>Planejamento Mensal</h1>
+                        <p class="subtitle">Professora Jaqueline</p>
+                    </div>
+                </div>
+                <div class="header-legend" id="headerLegendContainer"><!-- Preenchido via JS --></div>
+            </div>
+            
+            <div class="controls">
+                <div class="month-selector no-print">
+                    <button onclick="navigate(-1)">❮</button>
+                    <button onclick="goToToday()" class="btn-today">Hoje</button>
+                    <span id="monthDisplay" style="margin: 0 10px; font-weight: bold; text-transform: uppercase;">Fevereiro 2026 (Semana 1 - 7)</span>
+                    <select id="yearSelect" onchange="changeYear(this.value)" class="year-select"></select>
+                    <button onclick="navigate(1)">❯</button>
+                </div>
+                <div class="no-print" style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end;">
+                    <button class="btn-action btn-add-appt" onclick="openAppointmentModal()" title="Inserir um compromisso">
+                        ➕ Inserir Compromisso
+                    </button>
+                    <button class="btn-action btn-view-toggle" onclick="toggleView()" title="Alternar visão">
+                        <span id="view-icon">📅</span> <span id="view-label">Ver Mês</span>
+                    </button>
+                    <button class="btn-action btn-copy-month" onclick="openCopyModal()" title="Copiar rotina de outro mês">
+                        📋 Copiar de...
+                    </button>
+                    <button class="btn-action btn-legend-edit" onclick="openModalColor(null)" title="Editar nomes das legendas">
+                        🎨 Legendas
+                    </button>
+                    <button class="btn-action btn-holiday" onclick="openHolidayModal()" title="Adicionar Feriados ou Folgas">
+                        📅 Feriados
+                    </button>
+                    <button class="btn-action btn-alert-manager" onclick="openAlertModal()" title="Gerenciar Avisos e Prazos">
+                        🔔 Avisos
+                    </button>
+                    <button class="btn-action btn-save-self" onclick="saveSelfContainingFile()">
+                        💾 Salvar
+                    </button>
+                    <button class="btn-action" onclick="window.print()">
+                        🖨️ Imprimir
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="active-alerts-bar" class="alerts-bar no-print" onclick="showNotificationPopupFromBar()">
+            <div style="font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid rgba(146, 64, 14, 0.2);">⚠️ Atenção Próximos Eventos:</div>
+            <div id="active-alerts-content"></div>
+        </div>
+
+        <div class="help-text no-print">
+            Dica: Clique com <b>Botão Direito</b> nas linhas para pintar.
+        </div>
+        
+        <div class="hidden-on-screen" style="display: none;">
+            <h2 id="printTitle" style="display: none;">Semana: 1/2 a 7/2</h2>
+        </div>
+    </header>
+
+    <div class="calendar-grid">
+        <div id="calendarDays" class="days"></div>
+    </div>
+
+    <footer>✨ Ensinar com amor é inspirar o futuro ✨</footer>
+</div>
+
+<script id="app-script">
+    // --- DADOS E MODELO ---
+    let savedData = /*SAVE_DATA_HERE*/ { 
+        notes: {}, 
+        lineColors: {}, 
+        legendLabels: {
+            "color-1": "Legenda 1", "color-2": "Legenda 2", "color-3": "Legenda 3", "color-4": "Legenda 4"
+        },
+        holidays: {},
+        alerts: []
+    };
+    
+    // Migração Segura
+    if (!savedData.lineColors) savedData.lineColors = {};
+    if (!savedData.legendLabels) savedData.legendLabels = { "color-1": "Legenda 1", "color-2": "Legenda 2", "color-3": "Legenda 3", "color-4": "Legenda 4" };
+    if (!savedData.holidays) savedData.holidays = {};
+    if (!savedData.alerts) savedData.alerts = [];
+
+    let currentDate = new Date(); 
+    let viewMode = 'weekly'; 
+    
+    const inputsPerDay = 12; 
+    const months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+    const weekDayNames = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+    
+    const weeklySchedule = {
+        1: ["", "", "", "", "", "", "", "", "", "", "", ""],
+        2: ["", "", "", "", "", "", "", "", "", "", "", ""],
+        3: ["", "", "", "", "", "", "", "", "", "", "", ""],
+        4: ["", "", "", "", "", "", "", "", "", "", "", ""],
+        5: ["", "", "", "", "", "", "", "", "", "", "", ""],
+        0: [], 6: [] 
+    };
+
+    let activeLineKey = null;
+    let currentActiveAlerts = []; 
+
+    window.onload = function() {
+        populateYearSelect();
+        if (Object.keys(savedData.notes).length === 0) {
+            const local = localStorage.getItem('planner_jaqueline_offline');
+            if (local) {
+                try {
+                    const parsed = JSON.parse(local);
+                    if (parsed.notes) {
+                        savedData = parsed;
+                        if (!savedData.lineColors) savedData.lineColors = {};
+                        if (!savedData.holidays) savedData.holidays = {};
+                        if (!savedData.legendLabels) savedData.legendLabels = { "color-1": "Legenda 1", "color-2": "Legenda 2", "color-3": "Legenda 3", "color-4": "Legenda 4" };
+                        if (!savedData.alerts) savedData.alerts = [];
+                    }
+                } catch(e) {}
+            }
+        }
+        updateHeaderLegend();
+        checkActiveAlerts();
+        renderView();
+    };
+
+    function populateYearSelect() {
+        const yearSelect = document.getElementById('yearSelect');
+        const copyYearSelect = document.getElementById('copy-source-year');
+        
+        yearSelect.innerHTML = '';
+        copyYearSelect.innerHTML = '';
+
+        for (let y = 2026; y <= 2030; y++) {
+            const option = document.createElement('option');
+            option.value = y; option.textContent = y;
+            yearSelect.appendChild(option);
+            
+            const optionCopy = document.createElement('option');
+            optionCopy.value = y; optionCopy.textContent = y;
+            copyYearSelect.appendChild(optionCopy);
+        }
+    }
+
+    function autoResize(el) {
+        // No auto resize needed for flex logic
+    }
+
+    function updateHeaderLegend() {
+        const container = document.getElementById('headerLegendContainer');
+        container.innerHTML = '';
+        const colors = [
+            { code: 'color-1', color: '#22c55e' },
+            { code: 'color-2', color: '#3b82f6' },
+            { code: 'color-3', color: '#f97316' },
+            { code: 'color-4', color: '#ef4444' }
+        ];
+        colors.forEach(c => {
+            const label = savedData.legendLabels[c.code];
+            const div = document.createElement('div');
+            div.style.display = 'flex'; div.style.alignItems = 'center'; div.style.marginRight = '10px';
+            div.innerHTML = `<span class="legend-dot" style="background:${c.color}"></span> ${label}`;
+            container.appendChild(div);
+        });
+    }
+
+    function openModalColor(key) {
+        activeLineKey = key;
+        document.getElementById('legend-label-1').value = savedData.legendLabels['color-1'];
+        document.getElementById('legend-label-2').value = savedData.legendLabels['color-2'];
+        document.getElementById('legend-label-3').value = savedData.legendLabels['color-3'];
+        document.getElementById('legend-label-4').value = savedData.legendLabels['color-4'];
+        
+        if (key === null) {
+            document.getElementById('color-modal-title').textContent = "Editar Legendas";
+            document.getElementById('btn-remove-color').style.display = "none";
+        } else {
+            document.getElementById('color-modal-title').textContent = "Selecionar Categoria";
+            document.getElementById('btn-remove-color').style.display = "block";
+        }
+
+        document.getElementById('color-modal-overlay').style.display = 'flex';
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+        activeLineKey = null;
+    }
+
+    function updateLegend(colorKey, newLabel) {
+        savedData.legendLabels[colorKey] = newLabel;
+        updateHeaderLegend();
+        persist();
+    }
+
+    function applyColor(colorClass) {
+        if (activeLineKey === null) {
+            closeModal('color-modal-overlay');
+            return;
+        }
+        
+        if (colorClass) savedData.lineColors[activeLineKey] = colorClass;
+        else delete savedData.lineColors[activeLineKey];
+        persist();
+        renderView();
+        closeModal('color-modal-overlay');
+    }
+
+    // --- FERIADOS ---
+    function openHolidayModal() {
+        const year = currentDate.getFullYear();
+        document.getElementById('holiday-year-display').textContent = year;
+        document.getElementById('h-month').value = currentDate.getMonth();
+        renderHolidayList(year);
+        document.getElementById('holiday-modal-overlay').style.display = 'flex';
+    }
+
+    function renderHolidayList(year) {
+        const list = document.getElementById('holiday-list');
+        list.innerHTML = '';
+        const yearHolidays = Object.keys(savedData.holidays)
+            .filter(key => key.startsWith(year + '-'))
+            .sort((a, b) => {
+                const partsA = a.split('-').map(Number);
+                const partsB = b.split('-').map(Number);
+                if (partsA[1] !== partsB[1]) return partsA[1] - partsB[1];
+                return partsA[2] - partsB[2];
+            });
+        if (yearHolidays.length === 0) {
+            list.innerHTML = '<div style="padding:10px; color:#999; text-align:center;">Nenhum feriado neste ano.</div>';
+            return;
+        }
+        yearHolidays.forEach(key => {
+            const parts = key.split('-');
+            const month = parseInt(parts[1]);
+            const day = parseInt(parts[2]);
+            const name = savedData.holidays[key];
+            const item = document.createElement('div');
+            item.className = 'holiday-item';
+            item.innerHTML = `<span><strong>${day}/${month + 1}:</strong> ${name}</span><button onclick="removeHoliday('${key}')" title="Apagar">✕</button>`;
+            list.appendChild(item);
+        });
+    }
+
+    function addHoliday() {
+        const year = currentDate.getFullYear();
+        const day = document.getElementById('h-day').value;
+        const month = document.getElementById('h-month').value;
+        const name = document.getElementById('h-name').value;
+        if (!day || !name) { alert("Por favor, preencha o dia e o nome."); return; }
+        const dateKey = `${year}-${month}-${day}`;
+        savedData.holidays[dateKey] = name;
+        document.getElementById('h-day').value = '';
+        document.getElementById('h-name').value = '';
+        persist();
+        renderHolidayList(year);
+        renderView();
+    }
+
+    function removeHoliday(key) {
+        if (confirm('Remover este feriado?')) {
+            delete savedData.holidays[key];
+            persist();
+            renderHolidayList(currentDate.getFullYear());
+            renderView();
+        }
+    }
+
+    // --- AVISOS ---
+    function openAlertModal() {
+        renderAlertList();
+        document.getElementById('alert-modal-overlay').style.display = 'flex';
+    }
+
+    function renderAlertList() {
+        const list = document.getElementById('alert-list');
+        list.innerHTML = '';
+        if (!savedData.alerts || savedData.alerts.length === 0) {
+            list.innerHTML = '<div style="padding:10px; color:#999; text-align:center;">Nenhum aviso programado.</div>';
+            return;
+        }
+        
+        const sorted = [...savedData.alerts].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        sorted.forEach(alert => {
+            const d = new Date(alert.date + 'T00:00:00');
+            const dateStr = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+            const item = document.createElement('div');
+            item.className = 'alert-item';
+            item.innerHTML = `
+                <div style="flex:1;">
+                    <strong>${dateStr}</strong>: ${alert.desc} <br>
+                    <span style="font-size:0.8rem; color:#666;">(Avisar ${alert.daysBefore} dias antes)</span>
+                </div>
+                <button onclick="removeAlert('${alert.id}')" title="Apagar">✕</button>
+            `;
+            list.appendChild(item);
+        });
+    }
+
+    function addAlert() {
+        const date = document.getElementById('alert-date').value;
+        const days = document.getElementById('alert-days').value;
+        const desc = document.getElementById('alert-desc').value;
+
+        if (!date || !days || !desc) {
+            alert('Preencha todos os campos!');
+            return;
+        }
+
+        savedData.alerts.push({
+            id: Date.now().toString(),
+            date: date,
+            daysBefore: parseInt(days),
+            desc: desc
+        });
+
+        document.getElementById('alert-desc').value = '';
+        persist();
+        renderAlertList();
+        checkActiveAlerts();
+    }
+
+    function removeAlert(id) {
+        if (confirm('Apagar este aviso?')) {
+            savedData.alerts = savedData.alerts.filter(a => a.id !== id);
+            persist();
+            renderAlertList();
+            checkActiveAlerts();
+        }
+    }
+
+    function checkActiveAlerts() {
+        const bar = document.getElementById('active-alerts-bar');
+        const content = document.getElementById('active-alerts-content');
+        content.innerHTML = '';
+        
+        const today = new Date();
+        today.setHours(0,0,0,0); 
+
+        currentActiveAlerts = [];
+
+        if (savedData.alerts) {
+            const active = savedData.alerts.filter(alert => {
+                const eventDate = new Date(alert.date + 'T00:00:00');
+                const startDate = new Date(eventDate);
+                startDate.setDate(eventDate.getDate() - alert.daysBefore);
+                return today >= startDate && today <= eventDate;
+            }).sort((a,b) => new Date(a.date) - new Date(b.date));
+
+            currentActiveAlerts = active;
+
+            if (active.length > 0) {
+                active.forEach(alert => {
+                    const d = new Date(alert.date + 'T00:00:00');
+                    const dateStr = `${d.getDate()}/${d.getMonth()+1}`;
+                    const div = document.createElement('div');
+                    div.className = 'alert-item-display';
+                    div.innerHTML = `<span class="alert-icon">🔔</span> <b>${dateStr}</b> - ${alert.desc}`;
+                    content.appendChild(div);
+                });
+                bar.classList.add('active');
+                showNotificationPopup();
+            } else {
+                bar.classList.remove('active');
+            }
+        }
+    }
+
+    function showNotificationPopup() {
+        if (currentActiveAlerts.length > 0) {
+            const list = document.getElementById('notification-popup-list');
+            list.innerHTML = '';
+            currentActiveAlerts.forEach(alert => {
+                const d = new Date(alert.date + 'T00:00:00');
+                const dateStr = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+                const item = document.createElement('div');
+                item.className = 'notification-item';
+                item.innerHTML = `<span class="notification-date">${dateStr}</span><span class="notification-desc">${alert.desc}</span>`;
+                list.appendChild(item);
+            });
+            document.getElementById('notification-popup-overlay').style.display = 'flex';
+        }
+    }
+
+    function showNotificationPopupFromBar() {
+        if (currentActiveAlerts.length > 0) {
+            document.getElementById('notification-popup-overlay').style.display = 'flex';
+        }
+    }
+
+    function closeNotificationPopup() {
+        document.getElementById('notification-popup-overlay').style.display = 'none';
+    }
+
+    // --- NOVA FUNÇÃO: INSERIR COMPROMISSO ---
+    function openAppointmentModal() {
+        // Data padrão = hoje ou atual
+        const d = currentDate;
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        document.getElementById('appt-date').value = `${year}-${month}-${day}`;
+        
+        // Popula as opções de cores com os nomes das legendas
+        const colorOptionsContainer = document.getElementById('appt-color-options');
+        colorOptionsContainer.innerHTML = '';
+        
+        // Opção "Sem Cor" (padrão)
+        colorOptionsContainer.innerHTML += `
+            <label class="appt-color-label">
+                <input type="radio" name="appt-color" value="" class="appt-color-radio" checked>
+                <span class="appt-color-preview" style="border: 1px solid #ccc;"></span>
+                Padrão
+            </label>
+        `;
+
+        const colors = [
+            { code: 'color-1', color: '#22c55e' },
+            { code: 'color-2', color: '#3b82f6' },
+            { code: 'color-3', color: '#f97316' },
+            { code: 'color-4', color: '#ef4444' }
+        ];
+
+        colors.forEach(c => {
+            const label = savedData.legendLabels[c.code];
+            const html = `
+                <label class="appt-color-label">
+                    <input type="radio" name="appt-color" value="${c.code}" class="appt-color-radio">
+                    <span class="appt-color-preview" style="background: ${c.color};"></span>
+                    ${label}
+                </label>
+            `;
+            colorOptionsContainer.innerHTML += html;
+        });
+
+        resetApptForm();
+        document.getElementById('appointment-modal-overlay').style.display = 'flex';
+    }
+
+    function resetApptForm() {
+        document.getElementById('appt-text').value = '';
+        document.getElementById('appt-form-section').style.display = 'block';
+        document.getElementById('appt-summary-section').style.display = 'none';
+    }
+
+    function saveAppointment() {
+        const dateVal = document.getElementById('appt-date').value;
+        const text = document.getElementById('appt-text').value;
+        if (!dateVal || !text) { alert("Preencha data e compromisso!"); return; }
+
+        const turn = document.querySelector('input[name="appt-turn"]:checked').value;
+        const color = document.querySelector('input[name="appt-color"]:checked')?.value;
+        
+        const [year, month, day] = dateVal.split('-').map(Number);
+        const dateKey = `${year}-${month-1}-${day}`; 
+
+        let startIdx, endIdx;
+        if (turn === 'morning') {
+            startIdx = 0; endIdx = 5;
+        } else {
+            startIdx = 6; endIdx = 11;
+        }
+
+        let inserted = false;
+        for (let i = startIdx; i <= endIdx; i++) {
+            const key = `${dateKey}-${i}`;
+            const currentVal = savedData.notes[key];
+            if (!currentVal || currentVal.trim() === "") {
+                savedData.notes[key] = text;
+                // Aplica cor se selecionada
+                if (color) {
+                    savedData.lineColors[key] = color;
+                }
+                inserted = true;
+                break;
+            }
+        }
+
+        if (!inserted) {
+            alert("A agenda deste turno para este dia já está cheia!");
+            return; 
+        }
+
+        persist();
+        renderView(); 
+        showApptSummary(dateKey);
+    }
+
+    function showApptSummary(dateKey) {
+        document.getElementById('appt-form-section').style.display = 'none';
+        document.getElementById('appt-summary-section').style.display = 'block';
+        
+        const listMorning = document.getElementById('summary-morning-list');
+        const listAfternoon = document.getElementById('summary-afternoon-list');
+        listMorning.innerHTML = '';
+        listAfternoon.innerHTML = '';
+
+        for (let i = 0; i <= 5; i++) {
+            const val = savedData.notes[`${dateKey}-${i}`];
+            if (val && val.trim()) {
+                const li = document.createElement('li');
+                li.textContent = `${i+1}º: ${val}`;
+                listMorning.appendChild(li);
+            }
+        }
+        if (listMorning.innerHTML === '') listMorning.innerHTML = '<li>(Vazio)</li>';
+
+        for (let i = 6; i <= 11; i++) {
+            const val = savedData.notes[`${dateKey}-${i}`];
+            if (val && val.trim()) {
+                const li = document.createElement('li');
+                li.textContent = `${i-5}º: ${val}`; 
+                listAfternoon.appendChild(li);
+            }
+        }
+        if (listAfternoon.innerHTML === '') listAfternoon.innerHTML = '<li>(Vazio)</li>';
+    }
+
+    // --- COPIAR MÊS ---
+    function openCopyModal() {
+        const currentMonthName = months[currentDate.getMonth()];
+        const currentYear = currentDate.getFullYear();
+        document.getElementById('copy-target-month-name').textContent = `${currentMonthName} ${currentYear}`;
+        
+        let prevMonthIndex = currentDate.getMonth() - 1;
+        let prevYearVal = currentYear;
+        if (prevMonthIndex < 0) {
+            prevMonthIndex = 11;
+            prevYearVal--;
+        }
+        document.getElementById('copy-source-month').value = prevMonthIndex;
+        document.getElementById('copy-source-year').value = prevYearVal;
+
+        document.getElementById('copy-modal-overlay').style.display = 'flex';
+    }
+
+    function executeCopyMonth() {
+        const sourceMonth = parseInt(document.getElementById('copy-source-month').value);
+        const sourceYear = parseInt(document.getElementById('copy-source-year').value);
+        const targetMonth = currentDate.getMonth();
+        const targetYear = currentDate.getFullYear();
+
+        const weeklyPattern = {}; 
+        const daysInSource = new Date(sourceYear, sourceMonth + 1, 0).getDate();
+        
+        for (let d = 1; d <= daysInSource; d++) {
+            const dateObj = new Date(sourceYear, sourceMonth, d);
+            const weekDay = dateObj.getDay(); 
+            const dateKey = `${sourceYear}-${sourceMonth}-${d}`;
+            
+            if (!weeklyPattern[weekDay]) {
+                let hasContent = false;
+                let dayContent = [];
+                for (let i = 0; i < inputsPerDay; i++) {
+                    const val = savedData.notes[`${dateKey}-${i}`];
+                    dayContent.push(val || ""); 
+                    if (val && val.trim() !== "") hasContent = true;
+                }
+                if (hasContent) weeklyPattern[weekDay] = dayContent;
+            }
+        }
+
+        const daysInTarget = new Date(targetYear, targetMonth + 1, 0).getDate();
+        for (let d = 1; d <= daysInTarget; d++) {
+            const dateObj = new Date(targetYear, targetMonth, d);
+            const weekDay = dateObj.getDay();
+            const dateKey = `${targetYear}-${targetMonth}-${d}`;
+            
+            if (weeklyPattern[weekDay]) {
+                const patternLines = weeklyPattern[weekDay];
+                for (let i = 0; i < inputsPerDay; i++) {
+                    savedData.notes[`${dateKey}-${i}`] = patternLines[i];
+                }
+            }
+        }
+
+        persist();
+        renderView();
+        closeModal('copy-modal-overlay');
+        alert("Planejamento copiado com sucesso!");
+    }
+
+    // --- FUNÇÕES BÁSICAS ---
+    function clearDayPlans(dateKey) {
+        for (let i = 0; i < inputsPerDay; i++) {
+            const key = `${dateKey}-${i}`;
+            savedData.notes[key] = ""; 
+            delete savedData.lineColors[key]; 
+        }
+        persist();
+        renderView();
+    }
+
+    function toggleView() {
+        if (viewMode === 'monthly') {
+            viewMode = 'weekly';
+            document.getElementById('view-label').textContent = 'Ver Mês';
+            document.getElementById('view-icon').textContent = '📅';
+            document.body.classList.add('view-weekly');
+        } else {
+            viewMode = 'monthly';
+            document.getElementById('view-label').textContent = 'Ver Semana';
+            document.getElementById('view-icon').textContent = '📆';
+            document.body.classList.remove('view-weekly');
+        }
+        renderView();
+    }
+
+    function persist() {
+        localStorage.setItem('planner_jaqueline_offline', JSON.stringify(savedData));
+    }
+
+    function navigate(delta) {
+        if (viewMode === 'weekly') {
+            currentDate.setDate(currentDate.getDate() + (delta * 7));
+        } else {
+            currentDate.setMonth(currentDate.getMonth() + delta);
+        }
+        renderView();
+    }
+
+    function changeYear(newYear) { 
+        currentDate.setFullYear(parseInt(newYear)); 
+        renderView(); 
+        if(document.getElementById('holiday-modal-overlay').style.display === 'flex') {
+            document.getElementById('holiday-year-display').textContent = newYear;
+            renderHolidayList(newYear);
+        }
+    }
+    function goToToday() { currentDate = new Date(); renderView(); }
+
+    function renderView() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const yearSelect = document.getElementById('yearSelect');
+        yearSelect.value = year;
+        
+        const daysContainer = document.getElementById('calendarDays');
+        daysContainer.innerHTML = '';
+        
+        const days = [];
+        const today = new Date();
+
+        if (viewMode === 'weekly') {
+            const dayOfWeek = currentDate.getDay(); 
+            const startOfWeek = new Date(currentDate);
+            startOfWeek.setDate(currentDate.getDate() - dayOfWeek);
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+            
+            let displayMonth = months[startOfWeek.getMonth()];
+            if (startOfWeek.getMonth() !== endOfWeek.getMonth()) {
+                displayMonth += " / " + months[endOfWeek.getMonth()];
+            }
+            document.getElementById('monthDisplay').textContent = `${displayMonth} ${startOfWeek.getFullYear()} (Semana ${startOfWeek.getDate()} - ${endOfWeek.getDate()})`;
+            document.getElementById('printTitle').textContent = `Semana: ${startOfWeek.getDate()}/${startOfWeek.getMonth()+1} a ${endOfWeek.getDate()}/${endOfWeek.getMonth()+1}`;
+
+            for (let i = 0; i < 7; i++) {
+                const loopDate = new Date(startOfWeek);
+                loopDate.setDate(startOfWeek.getDate() + i);
+                days.push({ 
+                    day: loopDate.getDate(), 
+                    month: loopDate.getMonth(), 
+                    year: loopDate.getFullYear(), 
+                    current: true 
+                });
+            }
+            document.body.classList.add('view-weekly');
+
+        } else {
+            document.body.classList.remove('view-weekly');
+            document.getElementById('monthDisplay').textContent = months[month];
+            document.getElementById('printTitle').textContent = `${months[month]} ${year}`;
+
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            
+            const startPadding = firstDay.getDay();
+            for (let i = 0; i < startPadding; i++) { days.push({ empty: true }); }
+            for (let i = 1; i <= lastDay.getDate(); i++) {
+                days.push({ day: i, month: month, year: year, current: true });
+            }
+            const endPadding = 6 - lastDay.getDay();
+            for (let i = 0; i < endPadding; i++) { days.push({ empty: true }); }
+        }
+
+        days.forEach((d, index) => {
+            if (d.empty) {
+                const card = document.createElement('div');
+                card.className = 'day-card empty-day';
+                daysContainer.appendChild(card);
+                return;
+            }
+
+            const dateKey = `${d.year}-${d.month}-${d.day}`;
+            const weekDayIndex = new Date(d.year, d.month, d.day).getDay();
+            const dayName = weekDayNames[weekDayIndex];
+            const isWeekend = weekDayIndex === 0 || weekDayIndex === 6;
+            const isToday = d.day === today.getDate() && d.month === today.getMonth() && d.year === today.getFullYear();
+            const holidayName = savedData.holidays[dateKey];
+
+            const card = document.createElement('div');
+            card.className = `day-card ${d.current ? 'current-month' : 'other-month'} ${isToday ? 'today' : ''}`;
+            if (isWeekend) card.classList.add('weekend-day');
+            if (holidayName) card.classList.add('is-holiday');
+
+            // Header
+            const header = document.createElement('div');
+            header.className = 'day-header';
+            
+            const dayContainer = document.createElement('div');
+            dayContainer.className = 'day-number-container';
+            dayContainer.innerHTML = `<div class="day-circle">${d.day}</div><span class="day-text">${dayName}</span>`;
+            
+            header.appendChild(dayContainer);
+
+            if (d.current) {
+                const btnClear = document.createElement('button');
+                btnClear.className = 'btn-clear-day no-print';
+                btnClear.innerHTML = '🗑️';
+                btnClear.title = 'Limpar dia';
+                btnClear.onclick = () => {
+                    if(confirm(`Limpar planos de ${dayName} dia ${d.day}?`)) clearDayPlans(dateKey);
+                };
+                header.appendChild(btnClear);
+            }
+
+            if (holidayName) {
+                const hLabel = document.createElement('span');
+                hLabel.className = 'holiday-label';
+                hLabel.textContent = holidayName;
+                header.appendChild(hLabel);
+            }
+            card.appendChild(header);
+
+            // Inputs
+            const inputContainer = document.createElement('div');
+            inputContainer.className = 'day-inputs';
+
+            // Padrão vazio (template removido)
+            const template = weeklySchedule[weekDayIndex] || [];
+
+            for (let i = 0; i < inputsPerDay; i++) {
+                if (i === 6) {
+                    const sep = document.createElement('div');
+                    sep.className = 'turn-separator';
+                    sep.innerText = "--- Tarde ---";
+                    inputContainer.appendChild(sep);
+                }
+
+                const uniqueKey = `${dateKey}-${i}`;
+                const templateText = d.current && template[i] ? template[i] : "";
+                
+                const group = document.createElement('div');
+                const savedColor = savedData.lineColors[uniqueKey] || '';
+                group.className = `input-group ${savedColor}`;
+                
+                const input = document.createElement('textarea');
+                input.className = 'line-input';
+                input.rows = 1;
+                if (!d.current) input.style.opacity = "0.5";
+                
+                if (savedData.notes[uniqueKey] !== undefined) {
+                    input.value = savedData.notes[uniqueKey];
+                } else {
+                    input.value = templateText;
+                }
+                
+                input.oninput = (e) => {
+                    savedData.notes[uniqueKey] = e.target.value;
+                    persist();
+                };
+
+                if (d.current) {
+                    input.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        openModalColor(uniqueKey);
+                    });
+                    let pressTimerLine;
+                    input.addEventListener('touchstart', () => {
+                        pressTimerLine = setTimeout(() => {
+                            openModalColor(uniqueKey);
+                            if (navigator.vibrate) navigator.vibrate(50);
+                        }, 800); 
+                    }, {passive: true});
+                    input.addEventListener('touchend', () => clearTimeout(pressTimerLine));
+                    input.addEventListener('touchmove', () => clearTimeout(pressTimerLine));
+                }
+
+                group.appendChild(input);
+                inputContainer.appendChild(group);
+            }
+            card.appendChild(inputContainer);
+            daysContainer.appendChild(card);
+        });
+    }
+
+    function saveSelfContainingFile() {
+        const htmlContent = document.documentElement.outerHTML;
+        const scriptContent = document.getElementById('app-script').innerHTML;
+        const currentDataString = JSON.stringify(savedData);
+        
+        const newScriptContent = scriptContent.replace(
+            /let savedData = {"notes":{"2026-0-26-0":"Retorno do recesso ","2026-0-16-1":"Resultado Enem ","2026-0-23-1":"Aula experimental de beach tênis ","2026-0-26-7":"Monsenhor ","2026-0-30-1":"Jornada do Lavoisier ","2026-2-21-1":"Encontro pedagógico (pais)","2026-1-28-1":"Encontro pedagógico ","2026-3-25-1":"Encontro pedagógico ","2026-4-23-1":"Encontro pedagógico (boletim)","2026-6-25-1":"Encontro pedagógico ","2026-7-22-1":"Encontro pedagógico ","2026-8-12-1":"Encontro pedagógico ","2026-9-24-1":"Encontro pedagógico ","2026-10-14-1":"Encontro pedagógico ","2026-0-31-1":"comemoração Ana Julia","2026-1-2-0":"início das aulas"},"lineColors":{"2026-0-26-0":"color-1","2026-0-30-1":"color-2","2026-1-2-0":"color-1"},"legendLabels":{"color-1":"Csaj ","color-2":"Lavoisier ","color-3":"","color-4":"Provas"},"holidays":{"2026-3-02":"Semana santa ","2026-4-01":"Dia do trabalho ","2026-4-29":"Aniversário Saj","2026-5-04":"Corpus christi","2026-5-13":"Padr9eira deSaj","2026-6-19":"Recesso São João ","2026-8-07":"Independência ","2026-9-12":"Dia das crianças ","2026-9-15":"Dia do professor ","2026-10-02":"Finados","2026-10-15":"República ","2026-10-20":"Dia da consciência ","2026-6-02":"Independência da Bahia ","2026-7-11":"Dia do estudante ","2026-1-16":"carnaval","2026-3-21":"tiradentes","2026-5-19":"recesso junino","2026-6-29":"niver Cruz","2026-8-15":"padroeira Cruz"},"alerts":[{"id":"1769520830922","date":"2026-02-21","daysBefore":3,"desc":"Encontro pedagógico"},{"id":"1769520860679","date":"2026-05-23","daysBefore":3,"desc":"Encontro pedagógico "}]};/, 
+            `let savedData = ${currentDataString};`
+        );
+
+        const headContent = document.head.innerHTML;
+        const bodyClone = document.body.cloneNode(true);
+        bodyClone.querySelector('#calendarDays').innerHTML = '';
+        bodyClone.querySelector('#app-script').innerHTML = newScriptContent;
+        bodyClone.querySelector('#headerLegendContainer').innerHTML = '<!-- Preenchido via JS -->';
+        bodyClone.querySelector('#holiday-list').innerHTML = '<!-- Preenchido via JS -->';
+        bodyClone.querySelector('#alert-list').innerHTML = '<!-- Preenchido via JS -->';
+        bodyClone.querySelector('#active-alerts-content').innerHTML = '';
+        bodyClone.querySelector('#active-alerts-bar').classList.remove('active');
+        bodyClone.querySelector('#notification-popup-list').innerHTML = '';
+        bodyClone.querySelector('#notification-popup-overlay').style.display = 'none';
+        
+        const yearSelectClone = bodyClone.querySelector('#yearSelect');
+        if(yearSelectClone) yearSelectClone.innerHTML = '';
+        const copyYearClone = bodyClone.querySelector('#copy-source-year');
+        if(copyYearClone) copyYearClone.innerHTML = '';
+
+        const fullHtml = `<!DOCTYPE html><html lang="pt-BR"><head>${headContent}</head><body>${bodyClone.innerHTML}</body></html>`;
+
+        const blob = new Blob([fullHtml], {type: 'text/html'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Planner_Professora_Jaqueline_Atualizado.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        alert("Arquivo salvo! Substitua o arquivo antigo.");
+    }
+</script>
+
+</body></html>
