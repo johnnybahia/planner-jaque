@@ -189,7 +189,6 @@
         
         .btn-today { font-size: 0.75rem; padding: 3px 6px; margin: 0 5px; background: rgba(255,255,255,0.5); color: #7e22ce; }
         .btn-action { background: #facc15; color: #713f12; display: flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); font-size: 0.75rem; }
-        .btn-save-self { background: #fff; color: #ec4899; border: 2px solid white; }
         .btn-holiday { background: #ef4444; color: white; display: flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .btn-legend-edit { background: #a855f7; color: white; display: flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .btn-alert-manager { background: #f97316; color: white; display: flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
@@ -197,7 +196,6 @@
         .btn-view-toggle { background: #8b5cf6; color: white; display: flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.3); }
         .btn-add-appt { background: #10b981; color: white; display: flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .btn-add-appt:hover { background: #059669; }
-        .btn-settings { background: #6366f1; color: white; display: flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
 
         .sync-indicator {
             display: flex; align-items: center; gap: 4px; cursor: pointer;
@@ -209,17 +207,6 @@
         .sync-text { white-space: nowrap; }
         @keyframes pulse-sync { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
         .sync-dot.syncing { animation: pulse-sync 1s infinite; }
-
-        .settings-instructions { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin: 10px 0; font-size: 0.85rem; line-height: 1.5; }
-        .settings-instructions ol { margin: 5px 0; padding-left: 20px; }
-        .settings-instructions li { margin-bottom: 5px; }
-        .settings-instructions code { background: #e5e7eb; padding: 1px 4px; border-radius: 3px; font-size: 0.8rem; }
-        .settings-code-block { background: #1f2937; color: #e5e7eb; padding: 10px; border-radius: 6px; font-size: 0.75rem; overflow-x: auto; white-space: pre; margin: 8px 0; max-height: 200px; overflow-y: auto; font-family: monospace; }
-        .settings-url-input { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 0.9rem; margin: 8px 0; box-sizing: border-box; }
-        .settings-url-input:focus { border-color: var(--secondary); outline: none; }
-        .btn-test-connection { background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
-        .btn-test-connection:hover { background: #059669; }
-        .connection-status { font-size: 0.85rem; margin-left: 10px; font-weight: bold; }
 
         .calendar-grid { padding: 5px; flex: 1; overflow-y: auto; min-height: 0; display: flex; flex-direction: column; }
         .days { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(120px, 1fr); gap: 4px; align-items: stretch; flex: 1; }
@@ -485,100 +472,6 @@
     </div>
 </div>
 
-<!-- MODAL DE CONFIGURAÇÕES (GOOGLE SHEETS) -->
-<div id="settings-modal-overlay" class="modal-overlay">
-    <div class="custom-modal" style="max-width: 520px; border-top-color: #6366f1;">
-        <div class="modal-title">☁️ Sincronizar com Google Planilhas</div>
-        <p style="font-size: 0.9rem; color: #555; text-align: center; margin-top: -10px;">
-            Salve seus dados na nuvem e acesse de qualquer dispositivo.
-        </p>
-
-        <div style="margin: 15px 0;">
-            <label style="font-weight: bold; font-size: 0.9rem; color: var(--text);">URL do Google Apps Script:</label>
-            <input type="text" id="settings-url-input" class="settings-url-input" placeholder="https://script.google.com/macros/s/.../exec">
-            <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px;">
-                <button class="btn-test-connection" onclick="testConnection()">Testar Conexão</button>
-                <span id="connection-test-status" class="connection-status"></span>
-            </div>
-        </div>
-
-        <details style="margin: 10px 0;">
-            <summary style="cursor: pointer; font-weight: bold; color: var(--secondary); font-size: 0.9rem; padding: 5px 0;">
-                📖 Como configurar (passo a passo)
-            </summary>
-            <div class="settings-instructions">
-                <ol>
-                    <li>Abra o <b>Google Planilhas</b> e crie uma planilha nova (pode dar qualquer nome)</li>
-                    <li>Clique em <b>Extensões → Apps Script</b></li>
-                    <li>Apague tudo que estiver no editor e cole o código abaixo:</li>
-                </ol>
-                <div class="settings-code-block" id="gas-code-block">var SHEET_NAME = 'PlannerData';
-
-function getSheet() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(SHEET_NAME);
-  if (!sheet) {
-    sheet = ss.insertSheet(SHEET_NAME);
-    sheet.getRange('A1').setValue('{}');
-  }
-  return sheet;
-}
-
-function doGet(e) {
-  var sheet = getSheet();
-  var data = sheet.getRange('A1').getValue();
-  return ContentService
-    .createTextOutput(data || '{}')
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-function doPost(e) {
-  try {
-    var sheet = getSheet();
-    var data = e.postData.contents;
-    sheet.getRange('A1').setValue(data);
-    return ContentService
-      .createTextOutput(JSON.stringify({status:'ok'}))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch(err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({status:'error'}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}</div>
-                <ol start="4">
-                    <li>Clique em <b>Salvar</b> (ícone de disquete)</li>
-                    <li>Clique em <b>Implantar → Nova implantação</b></li>
-                    <li>Em "Tipo", selecione <b>App da Web</b></li>
-                    <li>Em "Executar como", selecione <b>Eu</b></li>
-                    <li>Em "Quem pode acessar", selecione <b>Qualquer pessoa</b></li>
-                    <li>Clique em <b>Implantar</b> e autorize quando pedido</li>
-                    <li>Copie a <b>URL</b> gerada e cole no campo acima</li>
-                </ol>
-            </div>
-        </details>
-
-        <details style="margin: 10px 0;">
-            <summary style="cursor: pointer; font-weight: bold; color: #f59e0b; font-size: 0.9rem; padding: 5px 0;">
-                ⬆️ Enviar dados locais para a nuvem
-            </summary>
-            <div style="padding: 10px; background: #fffbeb; border-radius: 6px; margin-top: 5px;">
-                <p style="font-size: 0.85rem; color: #92400e; margin: 0 0 10px 0;">
-                    Se você já tem dados salvos localmente e quer enviá-los para a nuvem pela primeira vez:
-                </p>
-                <button onclick="forceUploadToCloud()" style="width: 100%; padding: 10px; background: #f59e0b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">
-                    Enviar dados locais para a nuvem agora
-                </button>
-            </div>
-        </details>
-
-        <div class="modal-actions">
-            <button class="btn-modal" style="background: #6366f1; color: white;" onclick="saveSettings()">Salvar Configuração</button>
-            <button class="btn-modal btn-close" onclick="closeModal('settings-modal-overlay')">Fechar</button>
-        </div>
-    </div>
-</div>
-
 <div class="container">
     <header>
         <div class="header-top">
@@ -591,9 +484,9 @@ function doPost(e) {
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <div class="header-legend" id="headerLegendContainer"><!-- Preenchido via JS --></div>
-                    <div id="sync-indicator" class="sync-indicator no-print" onclick="openSettingsModal()" title="Status da sincronização - Clique para configurar">
+                    <div id="sync-indicator" class="sync-indicator no-print" title="Status da sincronização">
                         <span class="sync-dot" id="sync-dot"></span>
-                        <span class="sync-text" id="sync-text">Local</span>
+                        <span class="sync-text" id="sync-text">Nuvem</span>
                     </div>
                 </div>
             </div>
@@ -625,14 +518,8 @@ function doPost(e) {
                     <button class="btn-action btn-alert-manager" onclick="openAlertModal()" title="Gerenciar Avisos e Prazos">
                         🔔 Avisos
                     </button>
-                    <button class="btn-action btn-save-self" onclick="saveSelfContainingFile()">
-                        💾 Salvar
-                    </button>
                     <button class="btn-action" onclick="window.print()">
                         🖨️ Imprimir
-                    </button>
-                    <button class="btn-action btn-settings" onclick="openSettingsModal()" title="Configurar sincronização com Google Planilhas">
-                        ☁️ Nuvem
                     </button>
                 </div>
             </div>
@@ -659,9 +546,9 @@ function doPost(e) {
     <footer>✨ Ensinar com amor é inspirar o futuro ✨</footer>
 </div>
 
-<script id="app-script">
+<script>
     // --- DADOS E MODELO ---
-    let savedData = /*SAVE_DATA_HERE*/ { 
+    let savedData = {
         notes: {}, 
         lineColors: {}, 
         legendLabels: {
@@ -696,8 +583,7 @@ function doPost(e) {
     let activeLineKey = null;
     let currentActiveAlerts = [];
 
-    // --- SINCRONIZAÇÃO COM GOOGLE SHEETS ---
-    let SCRIPT_URL = localStorage.getItem('planner_script_url') || '';
+    // --- SINCRONIZAÇÃO COM GOOGLE SHEETS (via google.script.run) ---
     let cloudSaveTimeout = null;
 
     function updateSyncIndicator(status, message) {
@@ -720,186 +606,76 @@ function doPost(e) {
                 dot.style.background = '#ef4444';
                 text.textContent = message || 'Erro sync';
                 break;
-            case 'offline':
-                dot.style.background = '#9ca3af';
-                text.textContent = 'Local';
-                break;
             default:
-                dot.style.background = '#9ca3af';
-                text.textContent = 'Local';
+                dot.style.background = '#22c55e';
+                text.textContent = 'Nuvem';
         }
     }
 
-    async function loadFromCloud() {
-        if (!SCRIPT_URL) return false;
-        try {
-            updateSyncIndicator('syncing', 'Carregando...');
-            const response = await fetch(SCRIPT_URL);
-            if (!response.ok) throw new Error('HTTP ' + response.status);
-            const text = await response.text();
-            if (!text || text.trim() === '{}' || text.trim() === '') {
-                updateSyncIndicator('synced');
-                return false;
-            }
-            const data = JSON.parse(text);
-            if (data && data.notes && Object.keys(data.notes).length > 0) {
-                savedData = data;
-                if (!savedData.lineColors) savedData.lineColors = {};
-                if (!savedData.holidays) savedData.holidays = {};
-                if (!savedData.legendLabels) savedData.legendLabels = { "color-1": "Legenda 1", "color-2": "Legenda 2", "color-3": "Legenda 3", "color-4": "Legenda 4" };
-                if (!savedData.alerts) savedData.alerts = [];
-                localStorage.setItem('planner_jaqueline_offline', JSON.stringify(savedData));
-                updateSyncIndicator('synced');
-                return true;
-            }
-            updateSyncIndicator('synced');
-            return false;
-        } catch(err) {
-            console.error('Erro ao carregar da nuvem:', err);
-            updateSyncIndicator('error', 'Erro carregar');
-            return false;
-        }
+    function loadFromCloud(callback) {
+        updateSyncIndicator('syncing', 'Carregando...');
+        google.script.run
+            .withSuccessHandler(function(dataStr) {
+                try {
+                    if (!dataStr || dataStr.trim() === '{}' || dataStr.trim() === '') {
+                        updateSyncIndicator('synced');
+                        if (callback) callback(false);
+                        return;
+                    }
+                    var data = JSON.parse(dataStr);
+                    if (data && data.notes && Object.keys(data.notes).length > 0) {
+                        savedData = data;
+                        if (!savedData.lineColors) savedData.lineColors = {};
+                        if (!savedData.holidays) savedData.holidays = {};
+                        if (!savedData.legendLabels) savedData.legendLabels = { "color-1": "Legenda 1", "color-2": "Legenda 2", "color-3": "Legenda 3", "color-4": "Legenda 4" };
+                        if (!savedData.alerts) savedData.alerts = [];
+                        updateSyncIndicator('synced');
+                        if (callback) callback(true);
+                        return;
+                    }
+                    updateSyncIndicator('synced');
+                    if (callback) callback(false);
+                } catch(e) {
+                    console.error('Erro ao processar dados da nuvem:', e);
+                    updateSyncIndicator('error', 'Erro dados');
+                    if (callback) callback(false);
+                }
+            })
+            .withFailureHandler(function(err) {
+                console.error('Erro ao carregar da nuvem:', err);
+                updateSyncIndicator('error', 'Erro carregar');
+                if (callback) callback(false);
+            })
+            .loadData();
     }
 
     function saveToCloud() {
-        if (!SCRIPT_URL) return;
         clearTimeout(cloudSaveTimeout);
-        cloudSaveTimeout = setTimeout(async () => {
-            try {
-                updateSyncIndicator('syncing', 'Salvando...');
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(savedData),
-                });
-                try {
-                    const result = await response.json();
-                    if (result && result.status === 'error') {
-                        updateSyncIndicator('error', 'Erro salvar');
-                        return;
-                    }
-                } catch(e) { /* resposta pode ser opaca por CORS redirect, dado já foi salvo */ }
-                updateSyncIndicator('synced');
-            } catch(err) {
-                console.error('Erro ao salvar na nuvem:', err);
-                updateSyncIndicator('error', 'Erro salvar');
-            }
+        cloudSaveTimeout = setTimeout(function() {
+            updateSyncIndicator('syncing', 'Salvando...');
+            google.script.run
+                .withSuccessHandler(function() {
+                    updateSyncIndicator('synced');
+                })
+                .withFailureHandler(function(err) {
+                    console.error('Erro ao salvar na nuvem:', err);
+                    updateSyncIndicator('error', 'Erro salvar');
+                })
+                .saveData(JSON.stringify(savedData));
         }, 2000);
-    }
-
-    function openSettingsModal() {
-        document.getElementById('settings-url-input').value = SCRIPT_URL;
-        document.getElementById('connection-test-status').textContent = '';
-        document.getElementById('settings-modal-overlay').style.display = 'flex';
-    }
-
-    function saveSettings() {
-        const url = document.getElementById('settings-url-input').value.trim();
-        SCRIPT_URL = url;
-        localStorage.setItem('planner_script_url', url);
-        closeModal('settings-modal-overlay');
-        if (url) {
-            loadFromCloud().then(loaded => {
-                if (loaded) {
-                    updateHeaderLegend();
-                    checkActiveAlerts();
-                    renderView();
-                }
-            });
-        } else {
-            updateSyncIndicator('offline');
-        }
-    }
-
-    function testConnection() {
-        const url = document.getElementById('settings-url-input').value.trim();
-        const statusEl = document.getElementById('connection-test-status');
-        if (!url) {
-            statusEl.textContent = 'Cole a URL primeiro!';
-            statusEl.style.color = '#ef4444';
-            return;
-        }
-        statusEl.textContent = 'Testando...';
-        statusEl.style.color = '#f59e0b';
-        fetch(url)
-            .then(r => {
-                if (!r.ok) throw new Error('HTTP ' + r.status);
-                return r.text();
-            })
-            .then(text => {
-                try { JSON.parse(text); } catch(e) { throw new Error('Resposta inválida'); }
-                statusEl.textContent = '✓ Conexão OK!';
-                statusEl.style.color = '#22c55e';
-            })
-            .catch(err => {
-                statusEl.textContent = '✕ Falha: ' + err.message;
-                statusEl.style.color = '#ef4444';
-            });
-    }
-
-    async function forceUploadToCloud() {
-        const url = document.getElementById('settings-url-input').value.trim();
-        if (!url) { alert('Configure a URL primeiro!'); return; }
-
-        const localData = localStorage.getItem('planner_jaqueline_offline');
-        if (!localData) { alert('Não há dados locais para enviar.'); return; }
-
-        try {
-            const parsed = JSON.parse(localData);
-            if (!parsed.notes || Object.keys(parsed.notes).length === 0) {
-                alert('Os dados locais estão vazios.');
-                return;
-            }
-            updateSyncIndicator('syncing', 'Enviando...');
-            await fetch(url, {
-                method: 'POST',
-                body: localData,
-            });
-            updateSyncIndicator('synced');
-            alert('Dados enviados para a nuvem com sucesso!');
-        } catch(err) {
-            updateSyncIndicator('error', 'Erro envio');
-            alert('Erro ao enviar: ' + err.message);
-        }
     }
 
     // --- FIM SINCRONIZAÇÃO ---
 
-    window.onload = async function() {
+    window.onload = function() {
         populateYearSelect();
 
-        // 1. Tenta carregar da nuvem primeiro
-        SCRIPT_URL = localStorage.getItem('planner_script_url') || '';
-        let cloudLoaded = false;
-
-        if (SCRIPT_URL) {
-            cloudLoaded = await loadFromCloud();
-        }
-
-        // 2. Se a nuvem não retornou dados, tenta localStorage
-        if (!cloudLoaded) {
-            if (Object.keys(savedData.notes).length === 0) {
-                const local = localStorage.getItem('planner_jaqueline_offline');
-                if (local) {
-                    try {
-                        const parsed = JSON.parse(local);
-                        if (parsed.notes) {
-                            savedData = parsed;
-                            if (!savedData.lineColors) savedData.lineColors = {};
-                            if (!savedData.holidays) savedData.holidays = {};
-                            if (!savedData.legendLabels) savedData.legendLabels = { "color-1": "Legenda 1", "color-2": "Legenda 2", "color-3": "Legenda 3", "color-4": "Legenda 4" };
-                            if (!savedData.alerts) savedData.alerts = [];
-                        }
-                    } catch(e) {}
-                }
-            }
-            if (!SCRIPT_URL) {
-                updateSyncIndicator('offline');
-            }
-        }
-
-        updateHeaderLegend();
-        checkActiveAlerts();
-        renderView();
+        // Carrega dados da planilha Google via google.script.run
+        loadFromCloud(function(loaded) {
+            updateHeaderLegend();
+            checkActiveAlerts();
+            renderView();
+        });
     };
 
     function populateYearSelect() {
@@ -1386,7 +1162,6 @@ function doPost(e) {
     }
 
     function persist() {
-        localStorage.setItem('planner_jaqueline_offline', JSON.stringify(savedData));
         saveToCloud();
     }
 
@@ -1575,60 +1350,6 @@ function doPost(e) {
         });
     }
 
-    function saveSelfContainingFile() {
-        const currentDataString = JSON.stringify(savedData);
-        const scriptContent = document.getElementById('app-script').innerHTML;
-
-        // Regex genérica que encontra qualquer declaração savedData (JSON ou objeto literal)
-        const newScriptContent = scriptContent.replace(
-            /let savedData\s*=\s*\/\*SAVE_DATA_HERE\*\/\s*\{[\s\S]*?\};\s*/,
-            `let savedData = /*SAVE_DATA_HERE*/ ${currentDataString};\n    `
-        ).replace(
-            /let savedData\s*=\s*\/\*SAVE_DATA_HERE\*\/\s*(\{[\s\S]*?"alerts"\s*:\s*\[[\s\S]*?\]\s*\})\s*;/,
-            `let savedData = /*SAVE_DATA_HERE*/ ${currentDataString};`
-        );
-
-        // Se a primeira regex não conseguiu substituir (dados já salvos anteriormente sem o comentário),
-        // tenta uma regex mais genérica que encontra o padrão let savedData = {...};
-        let finalScriptContent = newScriptContent;
-        if (newScriptContent === scriptContent) {
-            finalScriptContent = scriptContent.replace(
-                /let savedData\s*=\s*\{[^;]*"alerts"\s*:\s*\[[^\]]*\]\s*\}\s*;/,
-                `let savedData = /*SAVE_DATA_HERE*/ ${currentDataString};`
-            );
-        }
-
-        const headContent = document.head.innerHTML;
-        const bodyClone = document.body.cloneNode(true);
-        bodyClone.querySelector('#calendarDays').innerHTML = '';
-        bodyClone.querySelector('#app-script').innerHTML = finalScriptContent;
-        bodyClone.querySelector('#headerLegendContainer').innerHTML = '<!-- Preenchido via JS -->';
-        bodyClone.querySelector('#holiday-list').innerHTML = '<!-- Preenchido via JS -->';
-        bodyClone.querySelector('#alert-list').innerHTML = '<!-- Preenchido via JS -->';
-        bodyClone.querySelector('#active-alerts-content').innerHTML = '';
-        bodyClone.querySelector('#active-alerts-bar').classList.remove('active');
-        bodyClone.querySelector('#notification-popup-list').innerHTML = '';
-        bodyClone.querySelector('#notification-popup-overlay').style.display = 'none';
-
-        const yearSelectClone = bodyClone.querySelector('#yearSelect');
-        if(yearSelectClone) yearSelectClone.innerHTML = '';
-        const copyYearClone = bodyClone.querySelector('#copy-source-year');
-        if(copyYearClone) copyYearClone.innerHTML = '';
-
-        const fullHtml = `<!DOCTYPE html><html lang="pt-BR"><head>${headContent}</head><body>${bodyClone.innerHTML}</body></html>`;
-
-        const blob = new Blob([fullHtml], {type: 'text/html'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'Planner_Professora_Jaqueline_Atualizado.html';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        alert("Arquivo salvo! Substitua o arquivo antigo.");
-    }
 </script>
 
 </body></html>
