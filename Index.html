@@ -1106,12 +1106,15 @@
             if (!weeklyPattern[weekDay]) {
                 let hasContent = false;
                 let dayContent = [];
+                let dayColors = [];
                 for (let i = 0; i < inputsPerDay; i++) {
-                    const val = savedData.notes[`${dateKey}-${i}`];
-                    dayContent.push(val || ""); 
+                    const key = `${dateKey}-${i}`;
+                    const val = savedData.notes[key];
+                    dayContent.push(val || "");
+                    dayColors.push(savedData.lineColors[key] || "");
                     if (val && val.trim() !== "") hasContent = true;
                 }
-                if (hasContent) weeklyPattern[weekDay] = dayContent;
+                if (hasContent) weeklyPattern[weekDay] = { content: dayContent, colors: dayColors };
             }
         }
 
@@ -1122,9 +1125,15 @@
             const dateKey = `${targetYear}-${targetMonth}-${d}`;
             
             if (weeklyPattern[weekDay]) {
-                const patternLines = weeklyPattern[weekDay];
+                const pattern = weeklyPattern[weekDay];
                 for (let i = 0; i < inputsPerDay; i++) {
-                    savedData.notes[`${dateKey}-${i}`] = patternLines[i];
+                    const key = `${dateKey}-${i}`;
+                    savedData.notes[key] = pattern.content[i];
+                    if (pattern.colors[i]) {
+                        savedData.lineColors[key] = pattern.colors[i];
+                    } else {
+                        delete savedData.lineColors[key];
+                    }
                 }
             }
         }
